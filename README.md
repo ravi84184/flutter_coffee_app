@@ -6,6 +6,142 @@ A beautiful and modern coffee shop application built with Flutter. This app show
 
 This project is based on the [Coffee App UI/UX Design](https://www.figma.com/design/irRiGOJiZ1CWYwywwErNwg/Freebie-Coffee-App-UI-UX-Design-(Community)?node-id=1-7924&t=xogym3dRfdCsxlTJ-0) from Figma Community.
 
+## 🏗️ Architecture
+
+This project follows Clean Architecture principles with a clear separation of concerns:
+
+```
+lib/
+├── core/
+│   ├── constants/           # App-wide constants
+│   ├── errors/             # Custom error handling
+│   ├── network/            # Network related utilities
+│   └── usecases/           # Base use case implementations
+├── data/
+│   ├── datasources/        # Remote and local data sources
+│   ├── models/             # Data models and DTOs
+│   └── repositories/       # Repository implementations
+├── domain/
+│   ├── entities/           # Core business entities
+│   ├── repositories/       # Repository interfaces
+│   └── usecases/          # Business logic use cases
+├── presentation/
+│   ├── bloc/              # State management
+│   ├── pages/             # UI screens
+│   └── widgets/           # Reusable UI components
+└── main.dart
+```
+
+## 🎯 SOLID Principles Implementation
+
+### 1. Single Responsibility Principle (SRP)
+- Each class has one specific responsibility
+- Example: `ProductRepository` only handles product data operations
+```dart
+class ProductRepository {
+  final ProductDataSource dataSource;
+  
+  Future<List<Product>> getProducts() async {
+    // Handle product fetching
+  }
+}
+```
+
+### 2. Open/Closed Principle (OCP)
+- Classes are open for extension but closed for modification
+- Example: Abstract base classes for repositories
+```dart
+abstract class Repository<T> {
+  Future<List<T>> getAll();
+  Future<T> getById(String id);
+}
+
+class CoffeeRepository extends Repository<Coffee> {
+  // Implementation
+}
+```
+
+### 3. Liskov Substitution Principle (LSP)
+- Derived classes must be substitutable for their base classes
+- Example: Product types hierarchy
+```dart
+abstract class Product {
+  String name;
+  double price;
+}
+
+class Coffee extends Product {
+  String roastLevel;
+}
+
+class Beverage extends Product {
+  bool isCold;
+}
+```
+
+### 4. Interface Segregation Principle (ISP)
+- Clients shouldn't depend on interfaces they don't use
+- Example: Separate interfaces for different functionalities
+```dart
+abstract class ProductViewer {
+  void display();
+}
+
+abstract class ProductPurchaser {
+  void addToCart();
+}
+
+class CoffeeItem implements ProductViewer, ProductPurchaser {
+  // Implementation
+}
+```
+
+### 5. Dependency Inversion Principle (DIP)
+- High-level modules shouldn't depend on low-level modules
+- Example: Repository pattern implementation
+```dart
+abstract class ProductRepository {
+  Future<List<Product>> getProducts();
+}
+
+class ProductRepositoryImpl implements ProductRepository {
+  final ApiClient apiClient;
+  
+  // Implementation
+}
+```
+
+## 🧹 Clean Code Practices
+
+1. **Dependency Injection**
+   - Using `get_it` for service location
+   - Proper initialization in `main.dart`
+
+2. **State Management**
+   - BLoC pattern for complex state management
+   - Provider for simpler states
+   - Clear separation of UI and business logic
+
+3. **Error Handling**
+   - Custom error types
+   - Proper error propagation
+   - User-friendly error messages
+
+4. **Testing**
+   ```dart
+   test/
+   ├── unit/
+   │   ├── repositories/
+   │   └── usecases/
+   ├── widget/
+   └── integration/
+   ```
+
+5. **Code Organization**
+   - Feature-first organization
+   - Consistent file naming
+   - Clear module boundaries
+
 ## ✨ Features
 
 - Modern and clean UI design

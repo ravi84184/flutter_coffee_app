@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
-import 'screens/sign_up_screen.dart';
-import 'screens/sign_in_screen.dart';
-import 'screens/home_screen.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'core/injection_container.dart' as di;
+import 'presentation/bloc/product_bloc.dart';
+import 'presentation/pages/home_screen.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await di.init();
   runApp(const MyApp());
 }
 
@@ -12,19 +15,26 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Coffee App',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFFC67C4E)),
-        useMaterial3: true,
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (_) => di.sl<ProductBloc>(),
+        ),
+      ],
+      child: MaterialApp(
+        title: 'Coffee App',
+        theme: ThemeData(
+          primaryColor: const Color(0xFF6B4731),
+          colorScheme: ColorScheme.fromSeed(
+            seedColor: const Color(0xFF6B4731),
+            primary: const Color(0xFF6B4731),
+            secondary: const Color(0xFFC67C4E),
+          ),
+          fontFamily: 'Gilroy',
+          useMaterial3: true,
+        ),
+        home: const HomeScreen(),
       ),
-      initialRoute: '/signin',
-      routes: {
-        '/signup': (context) => const SignUpScreen(),
-        '/signin': (context) => const SignInScreen(),
-        '/home': (context) => const HomeScreen(),
-      },
     );
   }
 }
